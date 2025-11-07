@@ -71,17 +71,14 @@ pair<bool, string> DBConnectionPool::get(string key){
   if(PQresultStatus(res) != PGRES_TUPLES_OK){
     string err = PQerrorMessage(conn);
     PQclear(res);
-    // cout << "DBPostgres:GET_request_success: (" << key << ", " << "val" << ")\n"; 
     throw Exception_("Postgres", "Fail to access: " + err);
   } else if (PQntuples(res) == 0){
-    // cout << "DBPostgres:GET_request_failed: (" << key << ", " << "---" << ")\n";
     PQclear(res);
     result = {false, ""};
   } else {
     string val = PQgetvalue(res, 0, 0);
     result = {true, val};
     PQclear(res);
-    // cout << "DBPostgres:GET_request_success: (" << key << ", " << "val" << ")\n";
   }
 
   {
@@ -104,11 +101,9 @@ bool DBConnectionPool::set(string key, string value) {
   bool result = true;
   if(PQresultStatus(res) != PGRES_COMMAND_OK){
     string err = PQerrorMessage(conn);
-    // cout << "DBPostgres:SET_request_failed: (" << key << ", " << value << ")\n";
     PQclear(res);
     throw Exception_("Postgres", "Fail to access: " + err);
   }
-  // cout << "DBPostgres:SET_request_success: (" << key << ", " << value << ")\n";
   PQclear(res);
 
   {
@@ -131,11 +126,9 @@ bool DBConnectionPool::remove(string key) {
   bool result = true;
   if(PQresultStatus(res) != PGRES_COMMAND_OK){
     string err = PQerrorMessage(conn);
-    // cout << "DBPostgres:DELETE_request_failed: (" << key << ", " << ")\n";
     PQclear(res);
     throw Exception_("Postgres", "Fail to access: " + err);
   }
-  // cout << "DBPostgres:DELETE_request_success: (" << key << ", " << "---" << ")\n";
   PQclear(res);
 
   {

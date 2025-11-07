@@ -3,9 +3,11 @@
 #include <cstdlib>
 
 #include "DBConnectionPool.h"
-#include "LRUCache.h"
+#include "Cache.h"
 
 #include "httplib.h"
+
+#define CACHE_BUCKETS 10
 
 using namespace std;
 using namespace httplib;
@@ -42,25 +44,24 @@ int main(int argc, char* argv[]) {
   string connectionString;
 
   if(db_conn) connectionString = db_conn;
-  else cerr << "Database connection string is not provided!";
+  else {
+    cerr << "Database connection string is not provided!\n";
+    return 1;
+  }
+  
+  int bucket_size = cachesize/CACHE_BUCKETS;
+  Cache cache(bucket_size, CACHE_BUCKETS);
 
-  // ThreadPool_ pool(threads);
-  LRUCache cache(cachesize);
-  
-  
   DBConnectionPool dbclient(connectionString, threads);
-  // DBConnection dbclient(connectionString);
 
   try {
-    dbclient.createPool(); // AVG latency ~1 ms
-    // dbclient.openConnection(); // AVG latency ~1 ms
+    dbclient.createPool(); 
   } catch(const Exception_& e) {
     cerr << e.what() << endl;
     return 1;
   }
   
   Server svr;
-
   svr.new_task_queue = [&] { return new ThreadPool(threads); };
 
   svr.Get("/hi", [](const Request &, Response &res) {
