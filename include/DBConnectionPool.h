@@ -9,28 +9,26 @@
 #include <mutex>
 #include "Exceptions.h"
 
-using namespace std;
-
 class DBConnectionPool {
 private:
-  queue<PGconn*> conn_queue;
+  std::queue<PGconn*> conn_queue;
   int size;
-  mutex mtx;
-  condition_variable cv;
-  string conn_string;
+  std::mutex mtx;
+  std::condition_variable cv;
+  std::string conn_string;
 
   PGconn* acquire_conn();
 
 public:
 
   DBConnectionPool() = default;
-  explicit DBConnectionPool(const string& conn_string, int n=8);
+  explicit DBConnectionPool(const std::string& conn_string, int n=8);
   ~DBConnectionPool();
 
   void createPool();
-  pair<bool, string> get(string key);
-  bool set(string key, string value);
-  bool remove(string key);
+  std::pair<bool, std::string> get(std::string key);
+  bool set(std::string key, std::string value);
+  bool remove(std::string key);
 };
  
 

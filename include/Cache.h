@@ -10,14 +10,13 @@
 #include <string>
 #include <unordered_map>
 
-using namespace std;
 
 class Cache {
 private:
   struct Bucket {
-    mutex mtx;
-    list<pair<string, string>> lru;
-    unordered_map<string, list<pair<string,string>>::iterator> idx_map;
+    std::mutex mtx;
+    std::list<std::pair<std::string, std::string>> lru;
+    std::unordered_map<std::string, std::list<std::pair<std::string,std::string>>::iterator> idx_map;
     int capacity;
 
     Bucket(int capacity=0) : capacity(capacity) {}
@@ -26,15 +25,15 @@ private:
   Bucket* buckets;
   int buckets_count;
 
-  int hash(const string &key);
+  int hash(const std::string &key);
 public:
   Cache() = default;
   explicit Cache(int capacity, int buckets_count);
   ~Cache();
 
-  pair<bool, string> get(const string &key);
-  bool set(const string &key, const string &value);
-  bool delete_(const string &key);
+  std::pair<bool, std::string> get(const std::string &key);
+  bool set(const std::string &key, const std::string &value);
+  bool delete_(const std::string &key);
 };
 
 #endif

@@ -1,15 +1,16 @@
+#ifndef EXCEPTIONS_H
+#define EXCEPTIONS_H
+
 #include <iostream>
 #include <string>
 
-using namespace std;
-
-class Exception_ : public exception {
+class Exception_ : public std::exception {
 private:
-  string type;
-  string message;
+  std::string type;
+  std::string message;
   int code;
 public:
-  Exception_(string type, string msg, int code=400) : 
+  Exception_(std::string type, std::string msg, int code=400) : 
   type(type), message(msg), code(code) {}
 
   const char* what() const noexcept {
@@ -17,3 +18,5 @@ public:
   }
   int code_() const noexcept {return code;}
 };
+
+#endif
